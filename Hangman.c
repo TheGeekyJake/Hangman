@@ -73,7 +73,7 @@ int initializeGame()
         return EXIT_FAILURE;
     }
 
-    printf("Random word selected: %s\n", wordToGuess);
+    // printf("Random word selected: %s\n", wordToGuess);
 
     secretWord = (char *)malloc(strlen(wordToGuess) + 1);
     strcpy(secretWord, wordToGuess);
@@ -82,14 +82,38 @@ int initializeGame()
     memset(guessedLetters, 0, sizeof(guessedLetters));
     numGuesses = 0;
 
-    // free(wordToGuess);
+    free(wordToGuess);
+}
+
+void handleUserInput(char guess, char secretWord[])
+{
+    // Add your logic here to check if the guessed letter is in the secret word
 }
 
 int main()
 {
+    char playerInput;
+
     initializeGame();
 
-    // Rest of your code goes here
+    printf("%s\n", secretWord);
+    printf("Here is the word to guess: \n");
+    for (int i = 0; secretWord[i] != '\0'; i++)
+    {
+        printf("*");
+    }
+    printf("\n");
+
+    printf("Enter a letter: ");
+    scanf(" %c", &playerInput);
+
+    while (!isalpha(playerInput))
+    {
+        printf("Invalid input. Please enter a letter: ");
+        scanf(" %c", &playerInput);
+    }
+
+    handleUserInput(tolower(playerInput), secretWord);
 
     return 0;
 }

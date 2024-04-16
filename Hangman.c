@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #define MAX_WORDS 100
 #define MAX_WORD_LENGTH 20
@@ -85,9 +86,24 @@ int initializeGame()
     free(wordToGuess);
 }
 
-void handleUserInput(char guess, char secretWord[])
+void handleUserInput(char guess)
 {
-    // Add your logic here to check if the guessed letter is in the secret word
+    // Update guessedLetters
+    guessedLetters[guess - 'a'] = 1;
+
+    // Replace asterisk with guessed letter
+    for (int i = 0; secretWord[i] != '\0'; i++)
+    {
+        if (guessedLetters[secretWord[i] - 'a'])
+        {
+            printf("%c", secretWord[i]);
+        }
+        else
+        {
+            printf("*");
+        }
+    }
+    printf("\n");
 }
 
 int main()
@@ -96,7 +112,6 @@ int main()
 
     initializeGame();
 
-    printf("%s\n", secretWord);
     printf("Here is the word to guess: \n");
     for (int i = 0; secretWord[i] != '\0'; i++)
     {
@@ -104,16 +119,37 @@ int main()
     }
     printf("\n");
 
-    printf("Enter a letter: ");
-    scanf(" %c", &playerInput);
+    int remainingLetters = strlen(secretWord);
 
-    while (!isalpha(playerInput))
+    while (remainingLetters > 0)
     {
-        printf("Invalid input. Please enter a letter: ");
+        printf("Enter a letter: ");
         scanf(" %c", &playerInput);
+        playerInput = tolower(playerInput);
+
+        while (!isalpha(playerInput))
+        {
+            printf("Invalid input. Please enter a letter: ");
+            scanf(" %c", &playerInput);
+            playerInput = tolower(playerInput);
+        }
+
+        if (!guessedLetters[playerInput - 'a'])
+        {
+            handleUserInput(playerInput);
+            if (strchr(secretWord, playerInput) != NULL)
+            {
+                remainingLetters--;
+            }
+            guessedLetters[playerInput - 'a'] = 1;
+        }
+        else
+        {
+            printf("You already guessed that letter. Try again.\n");
+        }
     }
 
-    handleUserInput(tolower(playerInput), secretWord);
+    printf("Congratulations! You guessed the word: %s\n", secretWord);
 
     return 0;
 }
